@@ -17,6 +17,7 @@ export class HomeHeader extends Component {
             <a href="https://facebook.com/thefullsnackblog" rel="noopener noreferrer" target="blank">Facebook</a>
             <a rel="me" href="https://github.com/huytd">Github</a>
             <a href="https://ko-fi.com/thefullsnack"><i className="em em-coffee"></i> Buy me a coffee</a>
+            <Link to="admin/posts">Admin</Link>
           </div>
           {/* <div>
             <h4>UI Designed by <a href="https://thefullsnack.com/">The Full Snack Developer</a></h4>
