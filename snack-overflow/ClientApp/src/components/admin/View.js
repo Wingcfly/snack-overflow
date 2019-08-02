@@ -18,11 +18,7 @@ export class View extends Component {
                 { id: 5, title: "Algorithm in Frontend - Kỳ 3: Hashmap", link: 'google.com' }
             ],
             listPostsFake: [
-                { id: 1, title: "Hôm nay thế nào em 1", link: 'google.com' },
-                { id: 2, title: "Hôm nay thế nào em 2", link: 'google.com' },
-                { id: 3, title: "Hôm nay thế nào em 3", link: 'google.com' },
-                { id: 4, title: "Hôm nay thế nào em 4", link: 'google.com' },
-                { id: 5, title: "Hôm nay thế nào em 5", link: 'google.com' }
+                {id: 1, title: "Happy Hacking"}
             ],
             listTags: []
         }
@@ -104,7 +100,7 @@ export class View extends Component {
                 break;
             }
         }
-        newListPostsFake.sort(this.sortArrayObjects);
+        newListPostsFake.sort(this.sortArrayObjects)
         this.setState({ listPostsFake: newListPostsFake, listTags: newListTags });
     }
     sortArrayObjects(a, b) {
@@ -141,7 +137,7 @@ export class View extends Component {
                         </div>
                         <h2>Tags</h2>
                         <div className="input-parent">
-                            <input list="browsers" id="tag-input" className="header-input" placeholder="Nhập tên bài viết liên quan" onKeyDown={(e) => this.addTag(e)} name="browser" />
+                            <input list="browsers" id="tag-input" className="header-input" placeholder="Nhập tags của bài viết" onKeyDown={(e) => this.addTag(e)} name="browser" />
                             <datalist id="browsers">
                                 {this.state.listPostsFake.map(post => {
                                     return (
@@ -149,14 +145,14 @@ export class View extends Component {
                                     )
                                 })}
                             </datalist>
-                            <ul id="listTag" className="list-tag">
+                            {/* <ul id="listTag" className="list-tag">
                                 {this.state.listTags.map(tag => {
                                     let tagID = "tag-id-" + tag.id;
                                     return (
                                         <li key={tag.id} title="Nhấn để xóa" id={tagID} onClick={(e) => this.removeTag(e)}>{tag.title}</li>
                                     )
                                 })}
-                            </ul>
+                            </ul> */}
                         </div>
                         <h2>Bài viết liên quan</h2>
                         <div className="input-parent">
