@@ -1578,9 +1578,44 @@ div.input-parent {
 
 input.header-input {
     width: 100%;
-    border-radius: 3px solid;
     border-radius: 3px;
     border: 3px solid #eee;
     padding: 7px 7px 7px 7px;
     font-family: open sans, sans-serif;
+}
+
+div.content-input {
+    width: 100%;
+    border-radius: 3px;
+    border: 3px solid #eee;
+    font-family: open sans, sans-serif;
+}
+
+div.cke_chrome {
+    border: 3px solid #eee;
+    border-radius: 3px
+}
+
+span.cke_top {
+    border-color: #eee
+}
+
+span.cke_bottom {
+    border-color: #eee
+}
+
+select.tag-select {
+    width: 100%;
+    border-radius: 3px;
+    border: 3px solid #eee;
+    padding: 7px 7px 7px 7px;
+    font-family: open sans, sans-serif
+}
+
+ul.list-tag {
+    padding-left: 8px
+}
+
+ul.list-tag > li {
+    cursor: pointer
 }

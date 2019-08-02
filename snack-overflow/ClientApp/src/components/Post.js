@@ -58,7 +58,7 @@ export class Post extends Component {
                     </div>
                 </div>
                 <div className="footer lightweight-theme">
-                    <p>thanks <a href="https://thefullsnack.com/">the full snack developer</a> for making the awesome UI</p>
+                    <p>thanks <a href="https://thefullsnack.com/">the full snack developer</a> for making awesome UI</p>
                     <p>Created with <i className="em em-coffee"></i> <a href="https://reactjs.org/">reactjs.org</a></p>
                 </div>
             </div>
