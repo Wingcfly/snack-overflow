@@ -17,10 +17,15 @@ export class View extends Component {
                 { id: 4, title: "Vài ghi chép về Iterator trong JavaScript", link: 'google.com' },
                 { id: 5, title: "Algorithm in Frontend - Kỳ 3: Hashmap", link: 'google.com' }
             ],
-            listPostsFake: [
-                {id: 1, title: "Happy Hacking"}
+            listRelativedPosts: [
+                {}
             ],
-            listTags: []
+            listTags: [
+                {id: 1, title: "Happy Hacking"},
+                {id: 2, title: "CSS"},
+                {id: 3, title: "Chuyện đi làm"}
+            ],
+            listTagsSelected: []
         }
     }
     changeTitle(e) {
@@ -72,37 +77,39 @@ export class View extends Component {
     }
     addTag(e) {
         if (e.key === 'Enter') {
+            let listTagsSelected = this.state.listTagsSelected.slice();
             let listTags = this.state.listTags.slice();
-            let newListPostsFake = this.state.listPostsFake.slice();
             let tagInput = e.target.value;
-            for (let i = 0; i < newListPostsFake.length; i++) {
-                let isSame = newListPostsFake[i].title === tagInput;
+            for (let i = 0; i < listTags.length; i++) {
+                let isSame = listTags[i].title === tagInput;
                 if (isSame) {
-                    listTags.push(newListPostsFake[i]);
-                    newListPostsFake.splice(i, 1);
+                    listTagsSelected.push(listTags[i]);
+                    listTags.splice(i, 1);
                     break;
                 }
             }
             document.getElementById('tag-input').value = "";
-            this.setState({ listPostsFake: newListPostsFake, listTags: listTags });
+            this.setState({ listTags: listTags, listTagsSelected: listTagsSelected });
         }
     }
     removeTag(e) {
         let tag = e.target.id;
         let tagID = tag[tag.length - 1];
-        let newListPostsFake = this.state.listPostsFake.slice();
-        let newListTags = this.state.listTags.slice();
-        for (let i = 0; i < newListTags.length; i++) {
-            let isSame = newListTags[i].id == tagID;
+        let listTags = this.state.listTags.slice();
+        let listTagsSelected = this.state.listTagsSelected.slice();
+        for (let i = 0; i < listTagsSelected.length; i++) {
+            let isSame = listTagsSelected[i].id == tagID;
             if (isSame) {
-                newListPostsFake.push(newListTags[i]);
-                newListTags.splice(i, 1);
+                listTags.push(listTagsSelected[i]);
+                listTagsSelected.splice(i, 1);
                 break;
             }
         }
-        newListPostsFake.sort(this.sortArrayObjects)
-        this.setState({ listPostsFake: newListPostsFake, listTags: newListTags });
+        listTags.sort(this.sortArrayObjects)
+        this.setState({ listTags: listTags, listTagsSelected: listTagsSelected });
     }
+    addRelatedPost(e) {}
+    removeRelatedPost(e) {}
     sortArrayObjects(a, b) {
         if (a.id < b.id) {
             return -1;
@@ -139,20 +146,20 @@ export class View extends Component {
                         <div className="input-parent">
                             <input list="browsers" id="tag-input" className="header-input" placeholder="Nhập tags của bài viết" onKeyDown={(e) => this.addTag(e)} name="browser" />
                             <datalist id="browsers">
-                                {this.state.listPostsFake.map(post => {
+                                {this.state.listTags.map(post => {
                                     return (
                                         <option key={post.id} value={post.title} />
                                     )
                                 })}
                             </datalist>
-                            {/* <ul id="listTag" className="list-tag">
-                                {this.state.listTags.map(tag => {
+                            <ul id="listTag" className="list-tag">
+                                {this.state.listTagsSelected.map(tag => {
                                     let tagID = "tag-id-" + tag.id;
                                     return (
                                         <li key={tag.id} title="Nhấn để xóa" id={tagID} onClick={(e) => this.removeTag(e)}>{tag.title}</li>
                                     )
                                 })}
-                            </ul> */}
+                            </ul>
                         </div>
                         <h2>Bài viết liên quan</h2>
                         <div className="input-parent">

@@ -751,8 +751,8 @@ header h3::before {
 header#user_top {
     position: fixed;
     display: block;
-    /* background: #f5f6fa; */
-    background: #000000;
+    background: #f5f6fa;
+    /* background: #000000; */
     width: 300px;
     height: 100%;
     padding: 50px 10px;
