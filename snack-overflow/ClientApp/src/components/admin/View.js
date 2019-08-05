@@ -1,120 +1,51 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import "easymde/dist/easymde.min.css";
-import CKEditor from 'ckeditor4-react';
 
 export class View extends Component {
+    static displayName = View.name;
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            title: "",
-            url: "",
-            content: "",
             listPosts: [
-                { id: 1, title: "Paper Review: What do Sketches say about Thinking", link: 'google.com' },
-                { id: 2, title: "Paper Review: Chuyện học khi mê sảng", link: 'google.com' },
-                { id: 3, title: "Keyboard from Scratch: Từ A tới Z", link: 'google.com' },
-                { id: 4, title: "Vài ghi chép về Iterator trong JavaScript", link: 'google.com' },
-                { id: 5, title: "Algorithm in Frontend - Kỳ 3: Hashmap", link: 'google.com' }
+                { id: 1, title: "Paper Review: What do Sketches say about Thinking", date: "14-11-2019", status: 'Công khai' },
+                { id: 2, title: "Paper Review: Chuyện học khi mê sảng", date: "14-11-2019", status: 'Riêng tư' },
+                { id: 3, title: "Always negative your paid time off", date: "14-11-2019", status: 'Công khai' },
+                { id: 4, title: "Keyboard from Scratch: Từ A tới Z", date: "14-11-2019", status: 'Công khai' },
+                { id: 5, title: "Vài ghi chép về Iterator trong JavaScript", date: "14-11-2019", status: 'Công khai' },
+                { id: 6, title: "Cái nút Unsubscribe", date: "14-11-2019", status: 'Riêng tư' },
+                { id: 7, title: "A taste of Atomic CSS", date: "14-11-2019", status: 'Công khai' },
+                { id: 8, title: "Là framework? hay là library?", date: "14-11-2019", status: 'Công khai' },
+                { id: 9, title: "Blame Driven Development", date: "14-11-2019", status: 'Công khai' },
+                { id: 10, title: "Bàn về Problem Solving Skill", date: "14-11-2019", status: 'Riêng tư' },
+                { id: 11, title: "Giấy với bút", date: "14-11-2019", status: 'Công khai' },
+                { id: 12, title: "Hai kiểu lập trình viên", date: "14-11-2019", status: 'Công khai' },
+                { id: 13, title: "Kí sự si-li-côn", date: "14-11-2019", status: 'Công khai' },
+                { id: 14, title: "Stay healthy", date: "14-11-2019", status: 'Công khai' }
             ],
-            listRelativedPosts: [
-                {}
-            ],
-            listTags: [
-                {id: 1, title: "Happy Hacking"},
-                {id: 2, title: "CSS"},
-                {id: 3, title: "Chuyện đi làm"}
-            ],
-            listTagsSelected: []
+            currentID: 0
         }
     }
-    changeTitle(e) {
-        let listTitleCharacter = e.target.value;
-        let unmarkWord = '';
-        for (let i = 0; i < listTitleCharacter.length; i++) {
-            unmarkWord += this.unmarkCharacter(listTitleCharacter[i])
-        }
-        let newListTitleCharacter = unmarkWord.trim().toLowerCase().split(/\s+/);
-        let urlCharacter = [];
-        for (let ch of newListTitleCharacter) {
-            if (newListTitleCharacter.indexOf(ch) !== (newListTitleCharacter.length - 1)) {
-                urlCharacter += ch + '-';
+    showMess(e) {
+        let listText = e.target.id.split("-");
+        let numberID = listText[1];
+        let isStartValue = this.state.currentID === 0;
+        let numID = parseInt(numberID);
+        if (numberID !== this.state.currentID) {
+            if (isStartValue) {
+                document.getElementById('post-feature-' + numID).classList.remove('non-display');
+                document.getElementById('post-info-' + numID).classList.remove('non-display');
+                this.setState({ currentID: numberID });
             } else {
-                urlCharacter += ch;
+                document.getElementById('post-feature-' + parseInt(this.state.currentID)).classList.add('non-display');
+                document.getElementById('post-feature-' + numID).classList.remove('non-display');
+                document.getElementById('post-info-' + parseInt(this.state.currentID)).classList.add('non-display');
+                document.getElementById('post-info-' + numID).classList.remove('non-display');
+                this.setState({ currentID: numberID });
             }
-        }
-        this.setState({
-            title: listTitleCharacter,
-            url: urlCharacter
-        })
-    }
-    changeContent(value) {
-        console.log(value)
-        // this.setState({ content: value })
-    }
-    unmarkCharacter(str) {
-        str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
-        str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
-        str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-        str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
-        str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
-        str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-        str = str.replace(/đ/g, "d");
-        str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "a");
-        str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "e");
-        str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "i");
-        str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "o");
-        str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "u");
-        str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "y");
-        str = str.replace(/Đ/g, "d");
-        return str;
-    }
-    onEditorChange(evt) {
-        let editorData = evt.editor.getData();
-        this.setState({
-            content: editorData
-        });
-    }
-    addTag(e) {
-        if (e.key === 'Enter') {
-            let listTagsSelected = this.state.listTagsSelected.slice();
-            let listTags = this.state.listTags.slice();
-            let tagInput = e.target.value;
-            for (let i = 0; i < listTags.length; i++) {
-                let isSame = listTags[i].title === tagInput;
-                if (isSame) {
-                    listTagsSelected.push(listTags[i]);
-                    listTags.splice(i, 1);
-                    break;
-                }
-            }
-            document.getElementById('tag-input').value = "";
-            this.setState({ listTags: listTags, listTagsSelected: listTagsSelected });
-        }
-    }
-    removeTag(e) {
-        let tag = e.target.id;
-        let tagID = tag[tag.length - 1];
-        let listTags = this.state.listTags.slice();
-        let listTagsSelected = this.state.listTagsSelected.slice();
-        for (let i = 0; i < listTagsSelected.length; i++) {
-            let isSame = listTagsSelected[i].id == tagID;
-            if (isSame) {
-                listTags.push(listTagsSelected[i]);
-                listTagsSelected.splice(i, 1);
-                break;
-            }
-        }
-        listTags.sort(this.sortArrayObjects)
-        this.setState({ listTags: listTags, listTagsSelected: listTagsSelected });
-    }
-    addRelatedPost(e) {}
-    removeRelatedPost(e) {}
-    sortArrayObjects(a, b) {
-        if (a.id < b.id) {
-            return -1;
         } else {
-            return 1;
+            document.getElementById('post-feature-' + numID).classList.add('non-display');
+            document.getElementById('post-info-' + numID).classList.add('non-display');
+            this.setState({ currentID: 0 });
         }
     }
     render() {
@@ -126,49 +57,29 @@ export class View extends Component {
                 </div>
                 <div className="container">
                     <div className="main">
-                        <h1><span>Tạo bài viết mới</span></h1>
-                        <h2>Tiêu đề</h2>
-                        <div className="input-parent">
-                            <input type="text" className="header-input" onChange={(e) => this.changeTitle(e)} placeholder="Nhập tiêu đề" />
-                        </div>
-                        <h2>Đường dẫn URL</h2>
-                        <div className="input-parent">
-                            <input type="text" id="url-input" value={this.state.url} className="header-input" placeholder="Đường dẫn URL" disabled />
-                        </div>
-                        <h2>Nội dung bài viết</h2>
-                        <div className="input-parent">
-                            <CKEditor
-                                data={this.state.data}
-                                onChange={(evt) => this.onEditorChange(evt)}
-                            />
-                        </div>
-                        <h2>Tags</h2>
-                        <div className="input-parent">
-                            <input list="browsers" id="tag-input" className="header-input" placeholder="Nhập tags của bài viết" onKeyDown={(e) => this.addTag(e)} name="browser" />
-                            <datalist id="browsers">
-                                {this.state.listTags.map(post => {
-                                    return (
-                                        <option key={post.id} value={post.title} />
-                                    )
-                                })}
-                            </datalist>
-                            <ul id="listTag" className="list-tag">
-                                {this.state.listTagsSelected.map(tag => {
-                                    let tagID = "tag-id-" + tag.id;
-                                    return (
-                                        <li key={tag.id} title="Nhấn để xóa" id={tagID} onClick={(e) => this.removeTag(e)}>{tag.title}</li>
-                                    )
-                                })}
-                            </ul>
-                        </div>
-                        <h2>Bài viết liên quan</h2>
-                        <div className="input-parent">
-                        </div>
+                        <h1><span>Danh sách bài viết hiện tại</span></h1>
+                        {this.state.listPosts.map(post => {
+                            let postID = 'post-' + post.id;
+                            let postFeatureID = 'post-feature-' + post.id;
+                            let postOtherInfoID = 'post-info-' + post.id;
+                            return (
+                                <div key={post.id}>
+                                    <h2 className="cursor-point" id={postID} onClick={(e) => this.showMess(e)}>{post.title}</h2>
+                                    <div className='other-tags non-display' id={postFeatureID}>Chức năng:
+                                        <Link className='topic-tag' to="">Xem</Link>
+                                        <Link className='topic-tag' to="posts/edit/1">Sửa</Link>
+                                        <Link className='topic-tag' to="">Xóa</Link>
+                                    </div>
+                                    <div className='other-tags non-display' id={postOtherInfoID}>Ngày đăng: <span className='topic-tag'>{post.date}</span> - Trạng thái: <span className='topic-tag'>{post.status}</span>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
                 <div className="footer lightweight-theme">
                     <p>thanks <a href="https://thefullsnack.com/">the full snack developer</a> for making awesome UI</p>
-                    <p>Created with <i className="em em-coffee"></i> <a href="https://reactjs.org/">love</a></p>
+                    <p>Created with <i className="em em-coffee"></i> <a href="https://reactjs.org/">reactjs.org</a></p>
                 </div>
             </div>
         );
