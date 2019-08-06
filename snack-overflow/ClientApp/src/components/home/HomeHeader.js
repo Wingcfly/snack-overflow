@@ -12,7 +12,7 @@ export class HomeHeader extends Component {
           </figure>
           <h2><Link to="/">Snack Overflow</Link></h2>
           <h4><span className="name_head">by</span> Nguyen Nguyen</h4>
-          <h3>Tôi yêu máy bay, nhưng lại thích <a href="https://github.com/Wingcfly">code</a>. Hiện tôi đang làm kĩ sư phần mềm cho một công ty Outsourcing của Anh.</h3>
+          <h3>Tôi yêu máy bay, nhưng lại thích <a href="https://github.com/Wingcfly">code</a>. Hiện tôi đang làm kĩ sư phần mềm cho một công ty Outsourcing tại Việt Nam.</h3>
           <div className="header-top">
             <a href="https://facebook.com/" rel="noopener noreferrer" target="blank">Facebook</a>
             <a rel="me" href="https://github.com/Wingcfly">Github</a>
