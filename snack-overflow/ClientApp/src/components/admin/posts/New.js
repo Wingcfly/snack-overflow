@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import "easymde/dist/easymde.min.css";
 import CKEditor from 'ckeditor4-react';
+import axios from 'axios';
 
 export class New extends Component {
     constructor(props) {
@@ -10,22 +11,24 @@ export class New extends Component {
             title: "",
             url: "",
             content: "",
-            listPosts: [
-                { id: 1, title: "Paper Review: What do Sketches say about Thinking", link: 'google.com' },
-                { id: 2, title: "Paper Review: Chuyện học khi mê sảng", link: 'google.com' },
-                { id: 3, title: "Keyboard from Scratch: Từ A tới Z", link: 'google.com' },
-                { id: 4, title: "Vài ghi chép về Iterator trong JavaScript", link: 'google.com' },
-                { id: 5, title: "Algorithm in Frontend - Kỳ 3: Hashmap", link: 'google.com' }
-            ],
+            listPosts: [],
             listRelatedPosts: [],
-            listTags: [
-                { id: 1, title: "Happy Hacking" },
-                { id: 2, title: "CSS" },
-                { id: 3, title: "Chuyện đi làm" }
-            ],
+            listTags: [],
             listTagsSelected: [],
             postStatus: "Chọn trạng thái bài viết"
         }
+    }
+    componentDidMount() {
+        axios.all([this.getListPosts(), this.getListTags()])
+            .then(axios.spread((lposts, ltags) => {
+                this.setState({ listPosts: lposts.data, listTags: ltags.data })
+            }));
+    }
+    getListPosts() {
+        return axios.get('api/post/ListPostsTitle');
+    }
+    getListTags() {
+        return axios.get('api/tag');
     }
     changeTitle(e) {
         let listTitleCharacter = e.target.value;
@@ -66,6 +69,20 @@ export class New extends Component {
         str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "u");
         str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "y");
         str = str.replace(/Đ/g, "d");
+        str = str.replace(":", "");
+        str = str.replace("/", "");
+        str = str.replace("-", "");
+        str = str.replace("@", "");
+        str = str.replace("`", "");
+        str = str.replace("&", "");
+        str = str.replace("$", "");
+        str = str.replace("#", "");
+        str = str.replace("^", "");
+        str = str.replace("*", "");
+        str = str.replace("(", "");
+        str = str.replace(")", "");
+        str = str.replace("+", "");
+        str = str.replace("=", "");
         return str;
     }
     onEditorChange(evt) {
@@ -83,7 +100,7 @@ export class New extends Component {
             let listTags = this.state.listTags.slice();
             let tagInput = e.target.value;
             for (let i = 0; i < listTags.length; i++) {
-                let isSame = listTags[i].title === tagInput;
+                let isSame = listTags[i].name === tagInput;
                 if (isSame) {
                     listTagsSelected.push(listTags[i]);
                     listTags.splice(i, 1);
@@ -161,7 +178,27 @@ export class New extends Component {
         document.getElementById('btnNotConfirm').classList.add('non-display');
     }
     submitPost() {
-        console.log("Sumitted!")
+        let listRelatedPosts = [];
+        for (let rPost of this.state.listRelatedPosts) {
+            listRelatedPosts.push(rPost.id);
+        }
+        let listTags = [];
+        for (let tName of this.state.listTagsSelected) {
+            listTags.push(tName.name);
+        }
+        let newPost = {
+            Title: this.state.title,
+            Content: this.state.content,
+            SEO: this.state.url,
+            Status: this.state.postStatus,
+            RelatedPost: listRelatedPosts,
+            Tags: listTags
+        }
+        axios.post('api/post', newPost, {
+            headers: {
+                'Content-type': 'application/json'
+            }
+        }).then(response => console.log(response));
     }
     render() {
         document.getElementById('body').className = "post";
@@ -194,7 +231,7 @@ export class New extends Component {
                             <datalist id="browsers">
                                 {this.state.listTags.map(tag => {
                                     return (
-                                        <option key={tag.id} value={tag.title} />
+                                        <option key={tag.id} value={tag.name} />
                                     )
                                 })}
                             </datalist>
@@ -202,7 +239,7 @@ export class New extends Component {
                                 {this.state.listTagsSelected.map(tag => {
                                     let tagID = "tag-id-" + tag.id;
                                     return (
-                                        <li key={tag.id} title="Nhấn để xóa" id={tagID} onClick={(e) => this.removeTag(e)}>{tag.title}</li>
+                                        <li key={tag.id} title="Nhấn để xóa" id={tagID} onClick={(e) => this.removeTag(e)}>{tag.name}</li>
                                     )
                                 })}
                             </ul>

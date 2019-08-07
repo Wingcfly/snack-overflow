@@ -1,31 +1,32 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export class View extends Component {
     static displayName = View.name;
     constructor(props) {
         super(props);
         this.state = {
-            listPosts: [
-                { id: 1, title: "Paper Review: What do Sketches say about Thinking", date: "14-11-2019", status: 'Công khai' },
-                { id: 2, title: "Paper Review: Chuyện học khi mê sảng", date: "14-11-2019", status: 'Riêng tư' },
-                { id: 3, title: "Always negative your paid time off", date: "14-11-2019", status: 'Công khai' },
-                { id: 4, title: "Keyboard from Scratch: Từ A tới Z", date: "14-11-2019", status: 'Công khai' },
-                { id: 5, title: "Vài ghi chép về Iterator trong JavaScript", date: "14-11-2019", status: 'Công khai' },
-                { id: 6, title: "Cái nút Unsubscribe", date: "14-11-2019", status: 'Riêng tư' },
-                { id: 7, title: "A taste of Atomic CSS", date: "14-11-2019", status: 'Công khai' },
-                { id: 8, title: "Là framework? hay là library?", date: "14-11-2019", status: 'Công khai' },
-                { id: 9, title: "Blame Driven Development", date: "14-11-2019", status: 'Công khai' },
-                { id: 10, title: "Bàn về Problem Solving Skill", date: "14-11-2019", status: 'Riêng tư' },
-                { id: 11, title: "Giấy với bút", date: "14-11-2019", status: 'Công khai' },
-                { id: 12, title: "Hai kiểu lập trình viên", date: "14-11-2019", status: 'Công khai' },
-                { id: 13, title: "Kí sự si-li-côn", date: "14-11-2019", status: 'Công khai' },
-                { id: 14, title: "Stay healthy", date: "14-11-2019", status: 'Công khai' }
-            ],
-            currentID: 0
+            listPosts: [],
+            currentID: 0,
+            isShowPublishedPost: true
         }
     }
-    showMess(e) {
+    componentDidMount() {
+        axios.get('api/post')
+            .then(response => {
+                console.log(response.data)
+                this.setState({ listPosts: response.data })
+            })
+            .catch(() => console.log("Can't get data from server"));
+    }
+    showPublishedPost() {
+        this.setState({ isShowPublishedPost: true, currentID: 0 });
+    }
+    showUnpublishedPost() {
+        this.setState({ isShowPublishedPost: false, currentID: 0 });
+    }
+    showFunction(e) {
         let listText = e.target.id.split("-");
         let numberID = listText[1];
         let isStartValue = this.state.currentID === 0;
@@ -48,6 +49,13 @@ export class View extends Component {
             this.setState({ currentID: 0 });
         }
     }
+    sortArrayObjects(a, b) {
+        if (a.id < b.id) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
     render() {
         document.getElementById('body').className = "post";
         return (
@@ -57,25 +65,56 @@ export class View extends Component {
                 </div>
                 <div className="container">
                     <div className="main">
+                        <ul className="publish-type">
+                            <li><button className="btn-create" onClick={() => this.showPublishedPost()}>Published</button></li>
+                            <li><button className="btn-create" onClick={() => this.showUnpublishedPost()}>Unpublished</button></li>
+                        </ul>
                         <h1><span>Danh sách bài viết hiện tại</span></h1>
-                        {this.state.listPosts.map(post => {
-                            let postID = 'post-' + post.id;
-                            let postFeatureID = 'post-feature-' + post.id;
-                            let postOtherInfoID = 'post-info-' + post.id;
-                            return (
-                                <div key={post.id}>
-                                    <h2 className="cursor-point" id={postID} onClick={(e) => this.showMess(e)}>{post.title}</h2>
-                                    <div className='other-tags non-display' id={postFeatureID}>Chức năng:
-                                        <Link className='topic-tag' to="">Xem</Link>
-                                        <Link className='topic-tag' to="posts/edit/1">Sửa</Link>
-                                        <Link className='topic-tag' to="">Xóa</Link>
-                                    </div>
-                                    <div className='other-tags non-display' id={postOtherInfoID}>Ngày đăng: <span className='topic-tag'>{post.date}</span> - Trạng thái: <span className='topic-tag'>{post.status}</span>
-                                    </div>
-                                </div>
-                            )
-                        })}
+                        {this.state.isShowPublishedPost ? (
+                            this.state.listPosts.filter(post => post.status == 1).map(post => {
+                                let postID = 'post-' + post.id;
+                                let postFeatureID = 'post-feature-' + post.id;
+                                let postOtherInfoID = 'post-info-' + post.id;
+                                let keyNumber = post.id;
+                                let date = new Date(post.date);
+                                let time = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                                return (
+                                    <Post key={keyNumber}
+                                        postID={postID}
+                                        postFeatureID={postFeatureID}
+                                        postOtherInfoID={postOtherInfoID}
+                                        title={post.title}
+                                        date={time}
+                                        status={post.status}
+                                        seo={post.seo}
+                                        showFunction={(e) => this.showFunction(e)} />
+                                )
+                            })
+                        ) : (
+                                this.state.listPosts.filter(post => post.status == 2).map(post => {
+                                    let postID = 'post-' + post.id;
+                                    let postFeatureID = 'post-feature-' + post.id;
+                                    let postOtherInfoID = 'post-info-' + post.id;
+                                    let keyNumber = post.id;
+                                    let date = new Date(post.date);
+                                    let time = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+                                    return (
+                                        <Post key={keyNumber}
+                                            postID={postID}
+                                            postFeatureID={postFeatureID}
+                                            postOtherInfoID={postOtherInfoID}
+                                            title={post.title}
+                                            date={time}
+                                            status={post.status}
+                                            seo={post.seo}
+                                            showFunction={(e) => this.showFunction(e)} />
+                                    )
+                                })
+                            )}
                     </div>
+                </div>
+                <div className="sticky-zone">
+                    <Link to="/admin/posts/new"><button className="btn-create">Tạo bài viết mới</button></Link>
                 </div>
                 <div className="footer lightweight-theme">
                     <p>thanks <a href="https://thefullsnack.com/">the full snack developer</a> for making awesome UI</p>
@@ -84,4 +123,20 @@ export class View extends Component {
             </div>
         );
     }
+}
+
+function Post(props) {
+    let linkPost = "../posts/" + props.seo;
+    return (
+        <div className="post-zone">
+            <h2 className="cursor-point" id={props.postID} onClick={(e) => props.showFunction(e)}>{props.title}</h2>
+            <div className='other-tags non-display' id={props.postFeatureID}>Chức năng:
+                <Link className='topic-tag' to={linkPost}>Xem</Link>
+                <Link className='topic-tag' to="posts/edit/1">Sửa</Link>
+                <Link className='topic-tag' to="">Xóa</Link>
+            </div>
+            <div className='other-tags non-display' id={props.postOtherInfoID}>Ngày đăng: <span className='topic-tag'>{props.date}</span>
+            </div>
+        </div>
+    )
 }

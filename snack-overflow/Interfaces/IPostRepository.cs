@@ -1,4 +1,5 @@
 ﻿using snack_overflow.Models;
+using snack_overflow.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,9 @@ namespace snack_overflow.Interfaces
 {
     public interface IPostRepository
     {
-        List<Post> GetListPost();
-        Post GetPost(string id);
+        PostDetail GetPost(string name);
+        List<ListPostsTitle> GetListPostsTitle(int id);
         void UpdatePost(int id, Post post);
+        void NewPost(PostDetail post);
     }
 }

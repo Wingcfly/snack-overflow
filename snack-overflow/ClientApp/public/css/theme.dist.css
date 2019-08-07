@@ -1628,6 +1628,21 @@ select.select-input {
     font-family: open sans, sans-serif;
 }
 
+.btn-create {
+    cursor: pointer;
+    border-radius: 5px;
+    border: 3px solid #e74c3c;
+    padding: 7px 7px 7px 7px;
+    background-color: #e74c3c;
+    color: #fff;
+    font-weight: bold;
+    font-family: open sans, sans-serif;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
 .create-zone {
     margin-top: 20px;
     padding: 0px 20px 0px 20px;
@@ -1649,7 +1664,7 @@ select.select-input {
     -o-border-radius: 5px;
 }
 
-.create-zone > .btn-create:active {
+.btn-create:active {
     cursor: pointer;
     border-radius: 5px;
     border: 3px solid #e74c3c;
@@ -1723,4 +1738,35 @@ select.select-input {
     -moz-transform: translateY(5px);
     -ms-transform: translateY(5px);
     -o-transform: translateY(5px);
+}
+
+.publish-type {
+    padding: 0px;
+    width: 100%;
+    display: inline-flex
+}
+
+.publish-type > li {
+    margin: 0 auto
+}
+
+.publish-type > li:before {
+    content: none
+}
+
+.publish-type > li > .btn-create:focus::after{
+    content: " - Here";
+    color: #000
+}
+
+.post-zone > h2 {
+    font-weight: normal
+}
+
+.sticky-zone {
+    position: sticky;
+    text-align: right;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    bottom: 30px
 }
