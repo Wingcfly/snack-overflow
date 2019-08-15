@@ -21,6 +21,7 @@ namespace snack_overflow.Models
         public int Status { get; set; }
         [Required]
         public DateTime DateCreate { get; set; }
+        public string RelatedPosts { get; set; }
 
         public virtual List<PostTag> PostTags { get; set; }
         public virtual List<Comment> Comments { get; set; }

@@ -14,7 +14,8 @@ namespace snack_overflow.ViewModels
         public string Seo { get; set; }
         public DateTime Date { get; set; }
         public List<string> Tags { get; set; }
-        public List<int> RelatedPost { get; set; }
+        public List<string> RelatedPost { get; set; }
+        public List<PostDetail> RelatedPostObject { get; set; }
         public List<Comment> Comments { get; set; }
         public int Status { get; set; }
     }

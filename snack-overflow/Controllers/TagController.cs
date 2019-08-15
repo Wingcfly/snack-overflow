@@ -22,5 +22,12 @@ namespace snack_overflow.Controllers
             var listTags = _tagRepository.ListTags();
             return new ObjectResult(listTags);
         }
+        [HttpGet]
+        [Route("{name}")]
+        public IActionResult GetListPostsOfTag([FromRoute]string name)
+        {   
+            var listPosts = _tagRepository.ListPostsOfTag(name);
+            return new ObjectResult(listPosts);
+        }
     }
 }

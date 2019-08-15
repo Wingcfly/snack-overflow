@@ -15,10 +15,10 @@ export class View extends Component {
     componentDidMount() {
         axios.get('api/post')
             .then(response => {
-                console.log(response.data)
                 this.setState({ listPosts: response.data })
             })
             .catch(() => console.log("Can't get data from server"));
+        document.title = "Danh sách bài viết | Nguyen's blog";
     }
     showPublishedPost() {
         this.setState({ isShowPublishedPost: true, currentID: 0 });
@@ -69,7 +69,11 @@ export class View extends Component {
                             <li><button className="btn-create" onClick={() => this.showPublishedPost()}>Published</button></li>
                             <li><button className="btn-create" onClick={() => this.showUnpublishedPost()}>Unpublished</button></li>
                         </ul>
-                        <h1><span>Danh sách bài viết hiện tại</span></h1>
+                        {this.state.isShowPublishedPost ? (
+                            <h1><span>Danh sách bài viết công khai</span></h1>
+                        ) : (
+                            <h1><span>Danh sách bài viết chưa công khai</span></h1>
+                        )}
                         {this.state.isShowPublishedPost ? (
                             this.state.listPosts.filter(post => post.status == 1).map(post => {
                                 let postID = 'post-' + post.id;
@@ -118,7 +122,7 @@ export class View extends Component {
                 </div>
                 <div className="footer lightweight-theme">
                     <p>thanks <a href="https://thefullsnack.com/">the full snack developer</a> for making awesome UI</p>
-                    <p>Created with <i className="em em-coffee"></i> <a href="https://reactjs.org/">reactjs.org</a></p>
+                    <p>Created with <i className="em em-heart"></i> <a href="https://reactjs.org/">love</a></p>
                 </div>
             </div>
         );
@@ -127,13 +131,20 @@ export class View extends Component {
 
 function Post(props) {
     let linkPost = "../posts/" + props.seo;
+    let linkPostEdit = "/admin/posts/edit/" + props.seo;
+    let isPublicPost = props.status === 1;
     return (
         <div className="post-zone">
             <h2 className="cursor-point" id={props.postID} onClick={(e) => props.showFunction(e)}>{props.title}</h2>
             <div className='other-tags non-display' id={props.postFeatureID}>Chức năng:
                 <Link className='topic-tag' to={linkPost}>Xem</Link>
-                <Link className='topic-tag' to="posts/edit/1">Sửa</Link>
+                <Link className='topic-tag' to={linkPostEdit}>Sửa</Link>
                 <Link className='topic-tag' to="">Xóa</Link>
+                {isPublicPost ? (
+                    <Link className='topic-tag' to="">Unpublish</Link>
+                ) : (
+                    <Link className='topic-tag' to="">Publish</Link>
+                )}
             </div>
             <div className='other-tags non-display' id={props.postOtherInfoID}>Ngày đăng: <span className='topic-tag'>{props.date}</span>
             </div>

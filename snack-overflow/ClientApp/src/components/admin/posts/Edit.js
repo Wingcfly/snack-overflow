@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import "easymde/dist/easymde.min.css";
 import CKEditor from 'ckeditor4-react';
+import axios from 'axios';
 
 export class Edit extends Component {
     constructor(props) {
@@ -10,22 +11,25 @@ export class Edit extends Component {
             title: "",
             url: "",
             content: "",
-            listPosts: [
-                { id: 1, title: "Paper Review: What do Sketches say about Thinking", link: 'google.com' },
-                { id: 2, title: "Paper Review: Chuyện học khi mê sảng", link: 'google.com' },
-                { id: 3, title: "Keyboard from Scratch: Từ A tới Z", link: 'google.com' },
-                { id: 4, title: "Vài ghi chép về Iterator trong JavaScript", link: 'google.com' },
-                { id: 5, title: "Algorithm in Frontend - Kỳ 3: Hashmap", link: 'google.com' }
-            ],
+            listPosts: [],
             listRelatedPosts: [],
-            listTags: [
-                { id: 1, title: "Happy Hacking" },
-                { id: 2, title: "CSS" },
-                { id: 3, title: "Chuyện đi làm" }
-            ],
+            listTags: [],
             listTagsSelected: [],
             postStatus: "Chọn trạng thái bài viết"
         }
+    }
+    componentDidMount() {
+        axios.all([this.getListPosts(), this.getListTags()])
+            .then(axios.spread((lposts, ltags) => {
+                this.setState({ listPosts: lposts.data, listTags: ltags.data })
+            }));
+        document.title = "Tạo bài viết | Nguyen's blog";
+    }
+    getListPosts() {
+        return axios.get('api/post/ListPostsTitle');
+    }
+    getListTags() {
+        return axios.get('api/tag');
     }
     changeTitle(e) {
         let listTitleCharacter = e.target.value;
@@ -66,6 +70,21 @@ export class Edit extends Component {
         str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "u");
         str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "y");
         str = str.replace(/Đ/g, "d");
+        str = str.replace(":", "");
+        str = str.replace("/", "");
+        str = str.replace("-", "");
+        str = str.replace("@", "");
+        str = str.replace("`", "");
+        str = str.replace("&", "");
+        str = str.replace("$", "");
+        str = str.replace("#", "");
+        str = str.replace("^", "");
+        str = str.replace("*", "");
+        str = str.replace("(", "");
+        str = str.replace(")", "");
+        str = str.replace("+", "");
+        str = str.replace("=", "");
+        str = str.replace("?", "");
         return str;
     }
     onEditorChange(evt) {
@@ -83,7 +102,7 @@ export class Edit extends Component {
             let listTags = this.state.listTags.slice();
             let tagInput = e.target.value;
             for (let i = 0; i < listTags.length; i++) {
-                let isSame = listTags[i].title === tagInput;
+                let isSame = listTags[i].name === tagInput;
                 if (isSame) {
                     listTagsSelected.push(listTags[i]);
                     listTags.splice(i, 1);
@@ -112,36 +131,36 @@ export class Edit extends Component {
     }
     addRelatedPost(e) {
         if (e.key === 'Enter') {
-            let listTagsSelected = this.state.listRelatedPosts.slice();
-            let listTags = this.state.listPosts.slice();
+            let listPostsSelected = this.state.listRelatedPosts.slice();
+            let listPosts = this.state.listPosts.slice();
             let tagInput = e.target.value;
-            for (let i = 0; i < listTags.length; i++) {
-                let isSame = listTags[i].title === tagInput;
+            for (let i = 0; i < listPosts.length; i++) {
+                let isSame = listPosts[i].title === tagInput;
                 if (isSame) {
-                    listTagsSelected.push(listTags[i]);
-                    listTags.splice(i, 1);
+                    listPostsSelected.push(listPosts[i]);
+                    listPosts.splice(i, 1);
                     break;
                 }
             }
             document.getElementById('related-post-input').value = "";
-            this.setState({ listPosts: listTags, listRelatedPosts: listTagsSelected });
+            this.setState({ listPosts: listPosts, listRelatedPosts: listPostsSelected });
         }
     }
     removeRelatedPost(e) {
         let tag = e.target.id;
         let tagID = tag[tag.length - 1];
-        let listTags = this.state.listPosts.slice();
-        let listTagsSelected = this.state.listRelatedPosts.slice();
-        for (let i = 0; i < listTagsSelected.length; i++) {
-            let isSame = listTagsSelected[i].id == tagID;
+        let listPosts = this.state.listPosts.slice();
+        let listPostsSelected = this.state.listRelatedPosts.slice();
+        for (let i = 0; i < listPostsSelected.length; i++) {
+            let isSame = listPostsSelected[i].id == tagID;
             if (isSame) {
-                listTags.push(listTagsSelected[i]);
-                listTagsSelected.splice(i, 1);
+                listPosts.push(listPostsSelected[i]);
+                listPostsSelected.splice(i, 1);
                 break;
             }
         }
-        listTags.sort(this.sortArrayObjects)
-        this.setState({ listPosts: listTags, listRelatedPosts: listTagsSelected });
+        listPosts.sort(this.sortArrayObjects)
+        this.setState({ listPosts: listPosts, listRelatedPosts: listPostsSelected });
     }
     sortArrayObjects(a, b) {
         if (a.id < b.id) {
@@ -161,7 +180,7 @@ export class Edit extends Component {
         document.getElementById('btnNotConfirm').classList.add('non-display');
     }
     submitPost() {
-        console.log("Sumitted!")
+        console.log("Submitted")
     }
     render() {
         document.getElementById('body').className = "post";
@@ -172,7 +191,7 @@ export class Edit extends Component {
                 </div>
                 <div className="container">
                     <div className="main">
-                        <h1><span>Sửa thông tin bài viết</span></h1>
+                        <h1><span>Tạo bài viết mới</span></h1>
                         <h2>Tiêu đề</h2>
                         <div className="input-parent">
                             <input type="text" className="header-input" onChange={(e) => this.changeTitle(e)} placeholder="Nhập tiêu đề" />
@@ -194,7 +213,7 @@ export class Edit extends Component {
                             <datalist id="browsers">
                                 {this.state.listTags.map(tag => {
                                     return (
-                                        <option key={tag.id} value={tag.title} />
+                                        <option key={tag.id} value={tag.name} />
                                     )
                                 })}
                             </datalist>
@@ -202,7 +221,7 @@ export class Edit extends Component {
                                 {this.state.listTagsSelected.map(tag => {
                                     let tagID = "tag-id-" + tag.id;
                                     return (
-                                        <li key={tag.id} title="Nhấn để xóa" id={tagID} onClick={(e) => this.removeTag(e)}>{tag.title}</li>
+                                        <li key={tag.id} title="Nhấn để xóa" id={tagID} onClick={(e) => this.removeTag(e)}>{tag.name}</li>
                                     )
                                 })}
                             </ul>
@@ -231,11 +250,11 @@ export class Edit extends Component {
                             <select className="select-input" onChange={(e) => this.changePostStatus(e)} value={this.state.postStatus}>
                                 <option value="Chọn trạng thái bài viết" disabled hidden>Chọn trạng thái bài viết</option>
                                 <option value="1">Công khai</option>
-                                <option value="2">Riêng tư</option>
+                                <option selected value="2">Riêng tư</option>
                             </select>
                         </div>
                         <div className="create-zone">
-                            <button id="btnSubmit" className="btn-create" onClick={() => this.confirmPost()}>Lưu thông tin</button>
+                            <button id="btnSubmit" className="btn-create" onClick={() => this.confirmPost()}>Tạo bài viết</button>
                             <button id="btnNotConfirm" className="btn-not-confirm non-display" onClick={() => this.notConfirmPost()}>Hủy</button>
                             <button id="btnConfirm" className="btn-confirm non-display" onClick={() => this.submitPost()}>Xác nhận</button>
                         </div>
@@ -243,7 +262,7 @@ export class Edit extends Component {
                 </div>
                 <div className="footer lightweight-theme">
                     <p>thanks <a href="https://thefullsnack.com/">the full snack developer</a> for making awesome UI</p>
-                    <p>Created with <i className="em em-coffee"></i> <a href="https://reactjs.org/">love</a></p>
+                    <p>Created with <i className="em em-heart"></i> <a href="https://reactjs.org/">love</a></p>
                 </div>
             </div>
         );

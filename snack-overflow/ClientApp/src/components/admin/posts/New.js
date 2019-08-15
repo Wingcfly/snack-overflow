@@ -15,7 +15,8 @@ export class New extends Component {
             listRelatedPosts: [],
             listTags: [],
             listTagsSelected: [],
-            postStatus: "Chọn trạng thái bài viết"
+            postStatus: "Chọn trạng thái bài viết",
+            textValue: "ABC"
         }
     }
     componentDidMount() {
@@ -23,6 +24,7 @@ export class New extends Component {
             .then(axios.spread((lposts, ltags) => {
                 this.setState({ listPosts: lposts.data, listTags: ltags.data })
             }));
+        document.title = "Tạo bài viết | Nguyen's blog";
     }
     getListPosts() {
         return axios.get('api/post/ListPostsTitle');
@@ -83,6 +85,7 @@ export class New extends Component {
         str = str.replace(")", "");
         str = str.replace("+", "");
         str = str.replace("=", "");
+        str = str.replace("?", "");
         return str;
     }
     onEditorChange(evt) {
@@ -186,11 +189,18 @@ export class New extends Component {
         for (let tName of this.state.listTagsSelected) {
             listTags.push(tName.name);
         }
+        let pStatusIsNull = (this.state.postStatus != 1 && this.state.postStatus != 2);
+        let pStatus;
+        if (pStatusIsNull) {
+            pStatus = 2;
+        } else {
+            pStatus = this.state.postStatus;
+        }
         let newPost = {
             Title: this.state.title,
             Content: this.state.content,
             SEO: this.state.url,
-            Status: this.state.postStatus,
+            Status: pStatus,
             RelatedPost: listRelatedPosts,
             Tags: listTags
         }
@@ -198,8 +208,16 @@ export class New extends Component {
             headers: {
                 'Content-type': 'application/json'
             }
-        }).then(response => console.log(response));
+        }).then(response => {
+            if (response.headers.status === "200") {
+                this.props.history.push('/');
+            }
+        })
+            .catch(() => console.log("Cant submit a new post"));
     }
+    handleChange = value => {
+        this.setState({ mdeValue: value });
+    };
     render() {
         document.getElementById('body').className = "post";
         return (
@@ -223,6 +241,35 @@ export class New extends Component {
                             <CKEditor
                                 data={this.state.data}
                                 onChange={(evt) => this.onEditorChange(evt)}
+                                config={{
+                                    image2_disableResizer: true,
+                                    toolbar: [
+                                    {
+                                        name: 'styles',
+                                        items: ['Styles', 'Format']
+                                    },
+                                    {
+                                        name: 'basicstyles',
+                                        items: ['Bold', 'Italic', 'Strike', '-', 'RemoveFormat']
+                                    },
+                                    {
+                                        name: 'paragraph',
+                                        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']
+                                    },
+                                    {
+                                        name: 'links',
+                                        items: ['Link', 'Unlink']
+                                    },
+                                    {
+                                        name: 'insert',
+                                        items: ['Image', 'Table']
+                                    },
+                                    {
+                                        name: 'tools',
+                                        items: ['Maximize']
+                                    }
+                                    ],
+                                }}
                             />
                         </div>
                         <h2>Tags</h2>
@@ -280,7 +327,7 @@ export class New extends Component {
                 </div>
                 <div className="footer lightweight-theme">
                     <p>thanks <a href="https://thefullsnack.com/">the full snack developer</a> for making awesome UI</p>
-                    <p>Created with <i className="em em-coffee"></i> <a href="https://reactjs.org/">love</a></p>
+                    <p>Created with <i className="em em-heart"></i> <a href="https://reactjs.org/">love</a></p>
                 </div>
             </div>
         );

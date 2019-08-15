@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using snack_overflow.Data;
 
 namespace snack_overflow.Migrations
 {
     [DbContext(typeof(BlogDBContext))]
-    partial class BlogDBContextModelSnapshot : ModelSnapshot
+    [Migration("20190810035145_Add-RelatedPosts")]
+    partial class AddRelatedPosts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

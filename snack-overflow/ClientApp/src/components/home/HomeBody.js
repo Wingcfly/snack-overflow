@@ -12,17 +12,9 @@ export class HomeBody extends Component {
     componentDidMount() {
         axios.get('api/post/listpoststitle')
             .then(response => {
-                let newData = response.data.sort(this.sortArrayObjects);
-                this.setState({ listPosts: newData })
+                this.setState({ listPosts: response.data })
             })
             .catch(() => console.log("can't get data from server"));
-    }
-    sortArrayObjects(a, b) {
-        if (a.id < b.id) {
-            return 1;
-        } else {
-            return -1;
-        }
     }
     render() {
         return (

@@ -10,7 +10,7 @@ namespace snack_overflow.Interfaces
     public interface IPostRepository
     {
         PostDetail GetPost(string name);
-        List<ListPostsTitle> GetListPostsTitle(int id);
+        List<PostDetail> GetListPostsTitle(int id);
         void UpdatePost(int id, Post post);
         void NewPost(PostDetail post);
     }
